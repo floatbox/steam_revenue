@@ -1,0 +1,64 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Include:
+    - "**/Rakefile"
+    - "**/config.ru"
+  Exclude:
+    - "bin/*"
+    - "db/**/*"
+    - "config/**/*"
+    - "script/**/*"
+    - "frontend/**/*"
+    - "vendor/**/*"
+    - "app/views/**/*"
+
+Rails:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/Encoding:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Style/IfUnlessModifier:
+  MaxLineLength: 120
+
+Style/WhileUntilModifier:
+  MaxLineLength: 120
+
+Style/LambdaCall:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/ClassLength:
+  CountComments: false
+  Max: 300
+
+Metrics/ModuleLength:
+  CountComments: false
+  Max: 300
+
+Metrics/MethodLength:
+  CountComments: false
+  Max: 15
+
+Metrics/AbcSize:
+  Max: 25
+
+Style/RaiseArgs:
+ EnforcedStyle: compact
+
+Style/EmptyLinesAroundClassBody:
+ EnforcedStyle: empty_lines

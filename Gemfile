@@ -49,6 +49,10 @@ group :development, :test do
 
   ## Rspec
   gem 'rspec-rails'
+
+  ## Fixtures
+  gem 'factory_girl', '~> 4.7.0'
+  gem 'factory_girl_rails', '~> 4.7.0'
 end
 
 group :development do
@@ -60,6 +64,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
 
   gem 'annotate'
+  gem 'rubocop'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
