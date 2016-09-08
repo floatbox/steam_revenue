@@ -2,13 +2,14 @@
 lock '3.6.1'
 
 set :application, 'steam_revenue'
+set :user, 'deployer'
 set :repo_url, 'git@github.com:floatbox/steam_revenue.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '~/apps/steam_revenue'
+set :deploy_to, "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -24,10 +25,10 @@ set :deploy_to, '~/apps/steam_revenue'
 # set :pty, true
 
 # Default value for :linked_files is []
-# append :linked_files, 'config/database.yml', 'config/secrets.yml'
+append :linked_files, 'config/database.yml'
 
 # Default value for linked_dirs is []
-# append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -37,11 +38,41 @@ set :deploy_to, '~/apps/steam_revenue'
 
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.3.1p112'
+set :rbenv_ruby, '2.3.1'
 
-# in case you want to set ruby version from the file:
-# set :rbenv_ruby, File.read('.ruby-version').strip
+# capistrano-puma
+set :puma_threads, [4, 16]
+set :puma_workers, 2
+set :puma_init_active_record, true
+set :puma_preload_app, true
 
-set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
-set :rbenv_map_bins, %w{rake gem bundle ruby rails}
-set :rbenv_roles, :all # default value
+namespace :puma do
+  desc 'Create Directories for Puma Pids and Socket'
+  task :make_dirs do
+    on roles(:app) do
+      execute "mkdir #{shared_path}/tmp/sockets -p"
+      execute "mkdir #{shared_path}/tmp/pids -p"
+    end
+  end
+
+  before :start, :make_dirs
+end
+
+namespace :deploy do
+
+  desc 'Initial Deploy'
+  task :initial do
+    on roles(:app) do
+      before 'deploy:restart', 'puma:start'
+      invoke 'deploy'
+    end
+  end
+
+  desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      invoke 'puma:restart'
+    end
+  end
+
+end
